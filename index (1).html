@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ตรวจสอบผลการทดสอบสหกิจศึกษา 2569 · ICT KU</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Chonburi&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   ⚙️  CONFIG — เปลี่ยนแค่บรรทัดนี้หลัง Deploy Apps Script
+   ============================================================ */
+:root {
+  --api-url: "PASTE_YOUR_APPS_SCRIPT_URL_HERE";
+}
+/* ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --green:      #00703C;
+  --green-dark: #004d28;
+  --green-soft: #e8f5ee;
+  --gold:       #C9A84C;
+  --gold-soft:  #fdf6e3;
+  --red:        #c0392b;
+  --red-soft:   #fdecea;
+  --bg:         #f4f7f5;
+  --card:       #ffffff;
+  --text:       #0d1f13;
+  --muted:      #6b7f73;
+  --border:     #ddeee4;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Sarabun', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ── background pattern ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(0,112,60,0.07) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(201,168,76,0.07) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── top bar ── */
+.topbar {
+  width: 100%;
+  background: var(--green-dark);
+  color: white;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  padding: 7px 16px;
+  font-weight: 400;
+  opacity: 0.9;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── main card wrap ── */
+.wrap {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 480px;
+  padding: 40px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+/* ── logo / header ── */
+.brand {
+  text-align: center;
+  animation: fadeDown 0.6s ease both;
+}
+
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.brand .seal {
+  width: 76px;
+  height: 76px;
+  background: var(--green);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  margin: 0 auto 14px;
+  box-shadow:
+    0 0 0 4px var(--gold),
+    0 8px 28px rgba(0,112,60,0.25);
+  animation: sealPulse 3s ease-in-out infinite;
+}
+
+@keyframes sealPulse {
+  0%,100% { box-shadow: 0 0 0 4px var(--gold), 0 8px 28px rgba(0,112,60,0.25); }
+  50%      { box-shadow: 0 0 0 7px rgba(201,168,76,0.35), 0 8px 32px rgba(0,112,60,0.3); }
+}
+
+.brand h1 {
+  font-family: 'Chonburi', serif;
+  font-size: 20px;
+  color: var(--green-dark);
+  line-height: 1.4;
+  margin-bottom: 5px;
+}
+
+.brand .sub {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.65;
+  font-weight: 400;
+}
+
+.brand .year-tag {
+  display: inline-block;
+  margin-top: 10px;
+  background: var(--green);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 12px;
+  border-radius: 20px;
+  letter-spacing: 1px;
+}
+
+/* ── search card ── */
+.card {
+  width: 100%;
+  background: var(--card);
+  border-radius: 20px;
+  padding: 28px 28px 24px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+  animation: fadeUp 0.5s 0.15s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.card-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--green-dark);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.input-row {
+  display: flex;
+  gap: 10px;
+}
+
+.id-input {
+  flex: 1;
+  padding: 13px 16px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  font-family: 'Sarabun', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+  background: var(--bg);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  letter-spacing: 2px;
+}
+
+.id-input::placeholder { letter-spacing: 0; font-size: 14px; color: #bbb; font-weight: 400; }
+
+.id-input:focus {
+  border-color: var(--green);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(0,112,60,0.1);
+}
+
+.btn-search {
+  padding: 13px 20px;
+  background: var(--green);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Sarabun', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.1s, box-shadow 0.18s;
+  white-space: nowrap;
+  box-shadow: 0 3px 12px rgba(0,112,60,0.3);
+}
+
+.btn-search:hover { background: var(--green-dark); box-shadow: 0 4px 16px rgba(0,112,60,0.35); }
+.btn-search:active { transform: scale(0.96); }
+.btn-search:disabled { background: #aaa; box-shadow: none; cursor: not-allowed; }
+
+.hint {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 9px;
+  text-align: center;
+}
+
+/* ── loading ── */
+.loader {
+  display: none;
+  width: 100%;
+  text-align: center;
+  padding: 20px 0 4px;
+}
+
+.spinner {
+  width: 36px; height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin: 0 auto 10px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loader p { font-size: 13.5px; color: var(--muted); }
+
+/* ── result card ── */
+.result-wrap {
+  width: 100%;
+  display: none;
+  animation: fadeUp 0.4s ease both;
+}
+
+/* header strip */
+.result-header {
+  border-radius: 16px 16px 0 0;
+  padding: 22px 24px 18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.result-header.pass { background: var(--green); }
+.result-header.cond { background: var(--gold); }
+.result-header.fail { background: var(--red); }
+
+.result-icon {
+  font-size: 38px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.result-header .rh-text { color: white; }
+.result-header.cond .rh-text { color: #3a2800; }
+
+.rh-text .rh-name {
+  font-family: 'Chonburi', serif;
+  font-size: 18px;
+  line-height: 1.35;
+  margin-bottom: 2px;
+}
+
+.rh-text .rh-result {
+  font-size: 13.5px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+/* body */
+.result-body {
+  background: white;
+  border-radius: 0 0 16px 16px;
+  padding: 20px 24px;
+  box-shadow: 0 6px 28px rgba(0,0,0,0.1);
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 20px;
+  margin-bottom: 16px;
+}
+
+.info-item .label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.info-item .value {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.badge-pos {
+  display: inline-block;
+  background: var(--green-soft);
+  color: var(--green-dark);
+  padding: 2px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.badge-plan {
+  display: inline-block;
+  background: #e8f0fd;
+  color: #1a3a99;
+  padding: 2px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: monospace;
+}
+
+/* note box */
+.note-box {
+  background: var(--gold-soft);
+  border: 1.5px solid #e8d48b;
+  border-left: 4px solid var(--gold);
+  border-radius: 10px;
+  padding: 13px 16px;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: #5c3d00;
+  margin-top: 4px;
+}
+
+.note-box .note-title {
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #8B6914;
+  margin-bottom: 5px;
+}
+
+/* reset btn */
+.btn-reset {
+  width: 100%;
+  margin-top: 14px;
+  padding: 11px;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  font-family: 'Sarabun', sans-serif;
+  font-size: 14px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-weight: 500;
+}
+
+.btn-reset:hover { border-color: var(--green); color: var(--green); background: var(--green-soft); }
+
+/* ── error card ── */
+.error-card {
+  width: 100%;
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  display: none;
+  animation: fadeUp 0.4s ease both;
+  border-top: 4px solid var(--red);
+}
+
+.error-card .err-icon { font-size: 36px; margin-bottom: 10px; }
+.error-card .err-msg { font-size: 15px; font-weight: 500; color: var(--red); margin-bottom: 6px; }
+.error-card .err-sub { font-size: 13px; color: var(--muted); }
+
+/* ── footer ── */
+footer {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  text-align: center;
+  padding: 0 16px 24px;
+  font-size: 11.5px;
+  color: #aaa;
+  line-height: 1.7;
+}
+
+/* ── responsive ── */
+@media (max-width: 400px) {
+  .card { padding: 22px 18px; }
+  .result-header { padding: 18px 18px 14px; }
+  .result-body { padding: 16px 18px; }
+  .info-grid { grid-template-columns: 1fr; gap: 10px; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  สาขาวิชาเทคโนโลยีสารสนเทศและการสื่อสาร · คณะศิลปศาสตร์และวิทยาศาสตร์ · มหาวิทยาลัยเกษตรศาสตร์ วิทยาเขตกำแพงแสน
+</div>
+
+<div class="wrap">
+
+  <!-- BRAND -->
+  <div class="brand">
+    <div class="seal">🌾</div>
+    <h1>ตรวจสอบผลการทดสอบ<br>สหกิจศึกษา</h1>
+    <div class="sub">
+      ภาควิชาวิทยาการคำนวณและเทคโนโลยีดิจิทัล<br>
+      คณะศิลปศาสตร์และวิทยาศาสตร์ · KU Kamphaeng Saen
+    </div>
+    <span class="year-tag">ปีการศึกษา 2569</span>
+  </div>
+
+  <!-- SEARCH CARD -->
+  <div class="card" id="searchCard">
+    <div class="card-label">🔍 ค้นหาผลสอบของคุณ</div>
+    <div class="input-row">
+      <input
+        class="id-input"
+        type="tel"
+        id="idInput"
+        maxlength="10"
+        placeholder="รหัสนิสิต 10 หลัก"
+        autocomplete="off"
+        inputmode="numeric"
+      >
+      <button class="btn-search" id="btnSearch" onclick="lookup()">ตรวจสอบ</button>
+    </div>
+    <p class="hint">กรอกรหัสนิสิต 10 หลัก แล้วกด "ตรวจสอบ"</p>
+
+    <!-- loading indicator -->
+    <div class="loader" id="loader">
+      <div class="spinner"></div>
+      <p>กำลังตรวจสอบข้อมูล...</p>
+    </div>
+  </div>
+
+  <!-- RESULT CARD -->
+  <div class="result-wrap" id="resultWrap">
+    <div class="result-header" id="resultHeader">
+      <div class="result-icon" id="resultIcon">✅</div>
+      <div class="rh-text">
+        <div class="rh-name" id="resultName">–</div>
+        <div class="rh-result" id="resultStatus">–</div>
+      </div>
+    </div>
+    <div class="result-body">
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="label">รหัสนิสิต</div>
+          <div class="value" id="rId">–</div>
+        </div>
+        <div class="info-item">
+          <div class="label">แผนการเรียน</div>
+          <div class="value"><span class="badge-plan" id="rPlan">–</span></div>
+        </div>
+        <div class="info-item" style="grid-column:1/-1">
+          <div class="label">ตำแหน่ง / สายงาน</div>
+          <div class="value"><span class="badge-pos" id="rPos">–</span></div>
+        </div>
+      </div>
+      <div id="noteBox" class="note-box" style="display:none">
+        <div class="note-title">📌 เงื่อนไข / หมายเหตุ</div>
+        <div id="noteText"></div>
+      </div>
+      <button class="btn-reset" onclick="reset()">🔄 ค้นหาใหม่</button>
+    </div>
+  </div>
+
+  <!-- ERROR CARD -->
+  <div class="error-card" id="errorCard">
+    <div class="err-icon" id="errIcon">❓</div>
+    <div class="err-msg" id="errMsg">ไม่พบข้อมูล</div>
+    <div class="err-sub" id="errSub"></div>
+    <button class="btn-reset" onclick="reset()" style="margin-top:14px">🔄 ลองใหม่</button>
+  </div>
+
+</div><!-- /wrap -->
+
+<footer>
+  ระบบประกาศผลสหกิจศึกษา · ICT KU Kamphaeng Saen · ปีการศึกษา 2569<br>
+  ข้อมูลนี้แสดงเฉพาะผลของนิสิตที่กรอกรหัสเท่านั้น
+</footer>
+
+<script>
+// ============================================================
+//  ⚙️  วาง URL ของ Apps Script ที่ได้จากการ Deploy ตรงนี้
+// ============================================================
+const API_URL = "https://script.google.com/macros/s/AKfycbyA79YsiRPybdRSg22loxH0_Jqh9BZRzQOq0SJQDP3n6iKXUX71w2W6VAeo-Fs0ERrl/exec";
+// ============================================================
+
+const $ = id => document.getElementById(id);
+
+// Enter key support
+$('idInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') lookup();
+});
+
+// Only allow digits
+$('idInput').addEventListener('input', e => {
+  e.target.value = e.target.value.replace(/\D/g, '');
+});
+
+async function lookup() {
+  const id = $('idInput').value.trim();
+
+  if (!id) {
+    shake($('idInput'));
+    return;
+  }
+  if (!/^\d{10}$/.test(id)) {
+    showError('⚠️', 'รหัสนิสิตต้องเป็นตัวเลข 10 หลัก', 'กรุณาตรวจสอบและกรอกใหม่อีกครั้ง');
+    return;
+  }
+
+  setLoading(true);
+  hideAll();
+
+  try {
+    const res = await fetch(`${API_URL}?id=${encodeURIComponent(id)}`);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+
+    setLoading(false);
+
+    if (json.status === 'found') {
+      showResult(json.data);
+    } else if (json.status === 'not_found') {
+      showError('🔍', 'ไม่พบรหัสนิสิตในระบบ', 'ตรวจสอบว่ากรอกรหัส ' + id + ' ถูกต้องหรือไม่');
+    } else {
+      showError('⚠️', 'เกิดข้อผิดพลาด', json.message || 'กรุณาลองใหม่อีกครั้ง');
+    }
+  } catch (err) {
+    setLoading(false);
+    showError('🌐', 'ไม่สามารถเชื่อมต่อระบบได้', 'กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต หรือลองใหม่ภายหลัง');
+    console.error(err);
+  }
+}
+
+function showResult(d) {
+  const cls  = resultClass(d.result);
+  const icon = resultIcon(d.result);
+
+  $('resultHeader').className = 'result-header ' + cls;
+  $('resultIcon').textContent  = icon;
+  $('resultName').textContent  = d.name || '–';
+  $('resultStatus').textContent = d.result || '–';
+  $('rId').textContent   = d.id   || '–';
+  $('rPlan').textContent = d.plan || '–';
+  $('rPos').textContent  = d.pos  || '–';
+
+  if (d.note && d.note !== 'undefined' && d.note !== '') {
+    $('noteText').textContent = d.note;
+    $('noteBox').style.display = 'block';
+  } else {
+    $('noteBox').style.display = 'none';
+  }
+
+  $('resultWrap').style.display = 'block';
+}
+
+function showError(icon, msg, sub) {
+  $('errIcon').textContent = icon;
+  $('errMsg').textContent  = msg;
+  $('errSub').textContent  = sub || '';
+  $('errorCard').style.display = 'block';
+}
+
+function reset() {
+  hideAll();
+  $('idInput').value = '';
+  $('idInput').focus();
+}
+
+function hideAll() {
+  $('resultWrap').style.display = 'none';
+  $('errorCard').style.display  = 'none';
+}
+
+function setLoading(on) {
+  $('loader').style.display   = on ? 'block' : 'none';
+  $('btnSearch').disabled     = on;
+}
+
+function resultClass(r) {
+  if (r === 'ผ่าน')              return 'pass';
+  if (r === 'ผ่านแบบมีเงื่อนไข') return 'cond';
+  return 'fail';
+}
+
+function resultIcon(r) {
+  if (r === 'ผ่าน')              return '✅';
+  if (r === 'ผ่านแบบมีเงื่อนไข') return '⚠️';
+  return '❌';
+}
+
+function shake(el) {
+  el.style.animation = 'none';
+  el.offsetHeight;
+  el.style.animation = 'shake 0.35s ease';
+  el.addEventListener('animationend', () => el.style.animation = '', { once: true });
+}
+</script>
+
+<style>
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%     { transform: translateX(-8px); }
+  40%     { transform: translateX(8px); }
+  60%     { transform: translateX(-5px); }
+  80%     { transform: translateX(5px); }
+}
+</style>
+
+</body>
+</html>
